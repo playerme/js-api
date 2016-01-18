@@ -1,0 +1,41 @@
+{
+  "name": "js-api",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "description": "JS utility classes to consume Player.me REST API",
+  "contributors": [
+    {
+      "name": "Orlando Ureta",
+      "email": "orland@player.me"
+    }
+  ],
+  "scripts": {
+    "build": "gulp build",
+    "test": "gulp test",
+    "watch": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/playerme/js-api.git"
+  },
+  "keywords": [
+    "Player.me"
+  ],
+  "author": "Player.me",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.3.26",
+    "babel-core": "^6.4.0",
+    "babel-preset-es2015": "^6.3.13",
+    "chai": "^3.4.1",
+    "del": "^2.2.0",
+    "eslint-config-airbnb": "^3.1.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1",
+    "gulp-eslint": "^1.1.1",
+    "gulp-mocha": "^2.2.0",
+    "gulp-plumber": "^1.0.1",
+    "mocha": "^2.3.4",
+    "run-sequence": "^1.1.5"
+  }
+}
