@@ -29,9 +29,7 @@ function fetch(endpoint) {
   return (0, _isomorphicFetch2.default)(url, _extends({
     headers: JSON_HEADERS,
     method: 'GET'
-  }, config)).then(function (response) {
-    return response.json();
-  });
+  }, config));
 }
 
 function post(endpoint, args) {

@@ -16,7 +16,7 @@ export default function fetch(endpoint, config = {}) {
       method: 'GET',
       ...config
     }
-  ).then(response => response.json());
+  );
 }
 
 export function post(endpoint, args) {
