@@ -6,6 +6,7 @@ import eslint from 'gulp-eslint';
 import del from 'del';
 import runSequence from 'run-sequence';
 import plumber from 'gulp-plumber';
+import yargs from 'yargs';
 
 const config = {
   paths: {
@@ -72,7 +73,7 @@ gulp.task('test', ['build'], () =>
   gulp.src([config.paths.test.run])
     .pipe(envs)
     .pipe(plumber())
-    .pipe(mocha({ reporter: 'spec' }))
+    .pipe(mocha({ reporter: 'spec', grep: yargs.argv['mocha-grep'] }))
     .pipe(envs.reset)
 );
 

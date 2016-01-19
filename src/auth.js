@@ -1,6 +1,10 @@
 import { post } from './lib/fetch';
 
-export function prelogin({ login }) {
+export function prelogin(args = {}) {
+  if (!args.login) return false;
+
+  const { login } = args;
+
   return new Promise((resolve, reject) => {
     post('auth/pre-login', { login })
       .then((response) => {
