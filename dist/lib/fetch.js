@@ -21,7 +21,6 @@ var JSON_HEADERS = {
 
 var BASE_URL = process.env.BASE_URL || 'https://player.me/api/v1';
 
-console.log(BASE_URL);
 function fetch(endpoint) {
   var config = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 

@@ -4,11 +4,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _hello = require('./hello');
+var _auth = require('./auth');
 
-Object.defineProperty(exports, 'hello', {
+Object.defineProperty(exports, 'auth', {
   enumerable: true,
   get: function get() {
-    return _hello.default;
+    return _auth.default;
   }
 });

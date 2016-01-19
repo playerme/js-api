@@ -1,5 +1,3 @@
-/* eslint no-console:0 */
-
 import gulp from 'gulp';
 import babel from 'gulp-babel';
 import env from 'gulp-env';
@@ -27,7 +25,7 @@ gulp.task('clean', () =>
   del([config.paths.js.dist, config.paths.test.dist])
 );
 
-gulp.task('build', ['babel-src', 'babel-test']);
+gulp.task('build', ['clean', 'babel-src', 'babel-test']);
 
 gulp.task('babel-src', ['lint-src'], () =>
   gulp.src(config.paths.js.src)
