@@ -2,6 +2,7 @@
 
 import gulp from 'gulp';
 import babel from 'gulp-babel';
+import env from 'gulp-env';
 import mocha from 'gulp-mocha';
 import eslint from 'gulp-eslint';
 import del from 'del';
@@ -23,7 +24,7 @@ const config = {
 };
 
 gulp.task('clean', () =>
-  del(config.paths.js.dist)
+  del([config.paths.js.dist, config.paths.test.dist])
 );
 
 gulp.task('build', ['babel-src', 'babel-test']);
@@ -59,10 +60,22 @@ gulp.task('watch', () => {
   gulp.watch(config.paths.test.src, ['babel-test', 'test']);
 });
 
+let envConfig;
+
+try {
+  envConfig = require('./.env.json');
+} catch (error) {
+  envConfig = {};
+}
+
+const envs = env.set(envConfig);
+
 gulp.task('test', ['build'], () =>
   gulp.src([config.paths.test.run])
+    .pipe(envs)
     .pipe(plumber())
     .pipe(mocha({ reporter: 'spec' }))
+    .pipe(envs.reset)
 );
 
 // Default Task
