@@ -6,6 +6,6 @@
     "jsdoc": "jsdoc3/jsdoc"
   },
   "scripts": {
-    "docs": "jsdoc -c conf.json"
+    "docs": "rm -rf ./docs/* & jsdoc -c conf.json"
   }
 }
