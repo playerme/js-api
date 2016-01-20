@@ -40,7 +40,7 @@ function post(endpoint, args) {
 function postProcess(response) {
   var processJSON = function processJSON(responseJSON) {
     if (responseJSON.success) {
-      return Promise.resolve(responseJSON.results);
+      return Promise.resolve(responseJSON.results || true);
     }
 
     return Promise.reject({ message: responseJSON.results });

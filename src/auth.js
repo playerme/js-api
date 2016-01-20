@@ -44,3 +44,15 @@ export function check(args = {}) {
     })
     .then(postProcess);
 }
+
+export function forgot(args = {}) {
+  const { username } = args;
+
+  if (!username) return false;
+
+  return post('auth/forgot', { username })
+    .then((response) => {
+      return Promise.resolve(response);
+    })
+    .then(postProcess);
+}

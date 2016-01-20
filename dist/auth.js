@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.prelogin = prelogin;
 exports.check = check;
+exports.forgot = forgot;
 
 var _fetch = require('./lib/fetch');
 
@@ -56,5 +57,16 @@ function check() {
 
       return Promise.resolve(resultWithSessionKey);
     });
+  }).then(_fetch.postProcess);
+}
+
+function forgot() {
+  var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var username = args.username;
+
+  if (!username) return false;
+
+  return (0, _fetch.post)('auth/forgot', { username: username }).then(function (response) {
+    return Promise.resolve(response);
   }).then(_fetch.postProcess);
 }

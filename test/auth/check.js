@@ -13,12 +13,11 @@ describe('auth.check', () => {
     assert.ok(!check());
   });
 
-  it('should return a Promise if correct parameters are given', () => {
-    assert.ok(check({ login: username, password }) instanceof Promise);
-  });
-
   it('should resolve to an object with playerme_session if valid', (done) => {
-    check({ login: username, password })
+    const promise = check({ login: username, password });
+    assert.typeOf(promise, 'Promise');
+
+    promise
       .then((user) => {
         assert.typeOf(user, 'object');
         assert.ok(user.id);

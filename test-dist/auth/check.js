@@ -16,12 +16,11 @@ var _auth = require('../../dist/auth');
     _chai.assert.ok(!(0, _auth.check)());
   });
 
-  (0, _mocha.it)('should return a Promise if correct parameters are given', function () {
-    _chai.assert.ok((0, _auth.check)({ login: username, password: password }) instanceof Promise);
-  });
-
   (0, _mocha.it)('should resolve to an object with playerme_session if valid', function (done) {
-    (0, _auth.check)({ login: username, password: password }).then(function (user) {
+    var promise = (0, _auth.check)({ login: username, password: password });
+    _chai.assert.typeOf(promise, 'Promise');
+
+    promise.then(function (user) {
       _chai.assert.typeOf(user, 'object');
       _chai.assert.ok(user.id);
       _chai.assert.equal(user.username, username);

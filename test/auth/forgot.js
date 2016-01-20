@@ -1,26 +1,24 @@
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
 
-import { prelogin } from '../../dist/auth';
+import { forgot } from '../../dist/auth';
 
-describe('auth.prelogin', () => {
+describe('auth.forgot', () => {
   const nonExistingUsername = process.env.NON_EXISTING_USERNAME;
   const username = process.env.USERNAME;
 
   it('should be defined and return false if parameter is not valid', () => {
-    assert.ok(prelogin);
-    assert.ok(!prelogin());
+    assert.ok(forgot);
+    assert.ok(!forgot());
   });
 
-  it('should resolve to an object if user exists', (done) => {
-    const promise = prelogin({ login: username });
+  it('should resolve if user exists', (done) => {
+    const promise = forgot({ username });
     assert.typeOf(promise, 'Promise');
 
     promise
-      .then((user) => {
-        assert.typeOf(user, 'object');
-        assert.ok(user.id);
-        assert.equal(user.username, username);
+      .then((success) => {
+        assert.isTrue(success);
         done();
       })
     .catch(() => {
@@ -29,7 +27,7 @@ describe('auth.prelogin', () => {
   });
 
   it('should reject with an error if user does not exist', (done) => {
-    prelogin({ login: nonExistingUsername })
+    forgot({ username: nonExistingUsername })
       .then(() => {
         done(new Error('env non-existing user exists'));
       }).catch((error) => {

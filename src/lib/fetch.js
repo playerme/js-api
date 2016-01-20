@@ -26,7 +26,7 @@ export function post(endpoint, args) {
 export function postProcess(response) {
   const processJSON = (responseJSON) => {
     if (responseJSON.success) {
-      return Promise.resolve(responseJSON.results);
+      return Promise.resolve(responseJSON.results || true);
     }
 
     return Promise.reject({ message: responseJSON.results });
