@@ -22,3 +22,19 @@ export default function fetch(endpoint, config = {}) {
 export function post(endpoint, args) {
   return fetch(endpoint, { method: 'POST', body: JSON.stringify(args) });
 }
+
+export function postProcess(response) {
+  const processJSON = (responseJSON) => {
+    if (responseJSON.success) {
+      return Promise.resolve(responseJSON.results);
+    }
+
+    return Promise.reject({ message: responseJSON.results });
+  };
+
+  if (typeof response.json === 'function') {
+    return response.json().then(processJSON);
+  }
+
+  return Promise.resolve(response).then(processJSON);
+}

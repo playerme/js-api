@@ -1,4 +1,4 @@
-import { post } from './lib/fetch';
+import { post, postProcess } from './lib/fetch';
 import Cookie from 'cookie';
 
 export function prelogin(args = {}) {
@@ -6,17 +6,7 @@ export function prelogin(args = {}) {
 
   if (!login) return false;
 
-  return new Promise((resolve, reject) => {
-    post('auth/pre-login', { login })
-      .then(response => response.json())
-      .then((response) => {
-        if (response.success) {
-          return resolve(response.results);
-        }
-
-        return reject({ message: response.results });
-      });
-  });
+  return post('auth/pre-login', { login }).then(postProcess);
 }
 
 export function check(args = {}) {
@@ -24,36 +14,33 @@ export function check(args = {}) {
 
   if (!login || !password) return false;
 
-  return new Promise((resolve, reject) => {
-    let playermeSession;
+  return post('auth/login', { login, password })
+    .then((response) => {
+      const cookies = Cookie.parse(response.headers.get('set-cookie'));
 
-    post('auth/login', { login, password })
-      .then((response) => {
-        const cookies = Cookie.parse(response.headers.get('set-cookie'));
+      // get subdomain / environemnt
+      const matched = /^https?:\/\/([^\.]+)\./.exec(response.url);
+      let sessionName = 'playerme_session';
 
-        // get subdomain
-        const matched = /^https?:\/\/([^\.]+)\./.exec(response.url);
-        let sessionName = 'playerme_session';
+      if (matched) {
+        const subdomain = matched[1];
+        sessionName = `${subdomain}_${sessionName}`;
+      }
 
-        if (matched) {
-          const subdomain = matched[1];
-          sessionName = `${subdomain}_${sessionName}`;
-        }
+      const playermeSession = cookies[sessionName];
 
-        playermeSession = cookies[sessionName];
+      return response.json().then((responseJSON) => {
+        // inject session key into response result
+        const resultWithSessionKey = {
+          ...responseJSON,
+          results: {
+            ...responseJSON.results,
+            playerme_session: playermeSession
+          }
+        };
 
-        return response.json();
-      }).then((response) => {
-        if (response.success) {
-          const results = {
-            playerme_session: playermeSession,
-            ...response.results
-          };
-
-          return resolve(results);
-        }
-
-        return reject({ message: response.results });
+        return Promise.resolve(resultWithSessionKey);
       });
-  });
+    })
+    .then(postProcess);
 }

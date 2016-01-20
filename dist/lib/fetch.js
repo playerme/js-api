@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = fetch;
 exports.post = post;
+exports.postProcess = postProcess;
 
 var _isomorphicFetch = require('isomorphic-fetch');
 
@@ -34,4 +35,20 @@ function fetch(endpoint) {
 
 function post(endpoint, args) {
   return fetch(endpoint, { method: 'POST', body: JSON.stringify(args) });
+}
+
+function postProcess(response) {
+  var processJSON = function processJSON(responseJSON) {
+    if (responseJSON.success) {
+      return Promise.resolve(responseJSON.results);
+    }
+
+    return Promise.reject({ message: responseJSON.results });
+  };
+
+  if (typeof response.json === 'function') {
+    return response.json().then(processJSON);
+  }
+
+  return Promise.resolve(response).then(processJSON);
 }

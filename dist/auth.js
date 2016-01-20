@@ -22,17 +22,7 @@ function prelogin() {
 
   if (!login) return false;
 
-  return new Promise(function (resolve, reject) {
-    (0, _fetch.post)('auth/pre-login', { login: login }).then(function (response) {
-      return response.json();
-    }).then(function (response) {
-      if (response.success) {
-        return resolve(response.results);
-      }
-
-      return reject({ message: response.results });
-    });
-  });
+  return (0, _fetch.post)('auth/pre-login', { login: login }).then(_fetch.postProcess);
 }
 
 function check() {
@@ -42,34 +32,29 @@ function check() {
 
   if (!login || !password) return false;
 
-  return new Promise(function (resolve, reject) {
-    var playermeSession = undefined;
+  return (0, _fetch.post)('auth/login', { login: login, password: password }).then(function (response) {
+    var cookies = _cookie2.default.parse(response.headers.get('set-cookie'));
 
-    (0, _fetch.post)('auth/login', { login: login, password: password }).then(function (response) {
-      var cookies = _cookie2.default.parse(response.headers.get('set-cookie'));
+    // get subdomain / environemnt
+    var matched = /^https?:\/\/([^\.]+)\./.exec(response.url);
+    var sessionName = 'playerme_session';
 
-      // get subdomain
-      var matched = /^https?:\/\/([^\.]+)\./.exec(response.url);
-      var sessionName = 'playerme_session';
+    if (matched) {
+      var subdomain = matched[1];
+      sessionName = subdomain + '_' + sessionName;
+    }
 
-      if (matched) {
-        var subdomain = matched[1];
-        sessionName = subdomain + '_' + sessionName;
-      }
+    var playermeSession = cookies[sessionName];
 
-      playermeSession = cookies[sessionName];
-
-      return response.json();
-    }).then(function (response) {
-      if (response.success) {
-        var results = _extends({
+    return response.json().then(function (responseJSON) {
+      // inject session key into response result
+      var resultWithSessionKey = _extends({}, responseJSON, {
+        results: _extends({}, responseJSON.results, {
           playerme_session: playermeSession
-        }, response.results);
+        })
+      });
 
-        return resolve(results);
-      }
-
-      return reject({ message: response.results });
+      return Promise.resolve(resultWithSessionKey);
     });
-  });
+  }).then(_fetch.postProcess);
 }

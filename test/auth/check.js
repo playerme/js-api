@@ -13,7 +13,7 @@ describe('auth.check', () => {
     assert.ok(!check());
   });
 
-  it('should return a Promise if login parameter is given', () => {
+  it('should return a Promise if correct parameters are given', () => {
     assert.ok(check({ login: username, password }) instanceof Promise);
   });
 

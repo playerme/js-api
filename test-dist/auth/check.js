@@ -16,7 +16,7 @@ var _auth = require('../../dist/auth');
     _chai.assert.ok(!(0, _auth.check)());
   });
 
-  (0, _mocha.it)('should return a Promise if login parameter is given', function () {
+  (0, _mocha.it)('should return a Promise if correct parameters are given', function () {
     _chai.assert.ok((0, _auth.check)({ login: username, password: password }) instanceof Promise);
   });
 
