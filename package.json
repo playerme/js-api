@@ -1,6 +1,6 @@
 {
-  "name": "js-api",
-  "version": "0.0.1",
+  "name": "playerme-js-api",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "description": "JS utility classes to consume Player.me REST API",
   "contributors": [
@@ -21,7 +21,9 @@
   "keywords": [
     "Player.me"
   ],
-  "author": "Player.me",
+  "author": "Orlando Ureta",
+  "url": "https://player.me",
+  "email": "orland@player.me",
   "license": "MIT",
   "devDependencies": {
     "babel": "^6.3.26",
