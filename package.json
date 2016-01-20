@@ -40,7 +40,6 @@
     "gulp-plumber": "^1.0.1",
     "gulp-util": "^3.0.7",
     "mocha": "^2.3.4",
-    "run-sequence": "^1.1.5",
     "yargs": "^3.32.0"
   },
   "dependencies": {

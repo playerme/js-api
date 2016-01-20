@@ -4,7 +4,6 @@ import env from 'gulp-env';
 import mocha from 'gulp-mocha';
 import eslint from 'gulp-eslint';
 import del from 'del';
-import runSequence from 'run-sequence';
 import plumber from 'gulp-plumber';
 import yargs from 'yargs';
 
@@ -21,6 +20,14 @@ const config = {
     }
   }
 };
+
+let envConfig;
+
+try {
+  envConfig = require('./.env.json');
+} catch (error) {
+  envConfig = {};
+}
 
 gulp.task('clean', () =>
   del([config.paths.js.dist, config.paths.test.dist])
@@ -55,29 +62,29 @@ gulp.task('lint-test', () =>
 );
 
 gulp.task('watch', () => {
-  gulp.watch(config.paths.js.src, ['babel-src', 'test']);
-  gulp.watch(config.paths.test.src, ['babel-test', 'test']);
+  envConfig.WATCH_MODE = true;
+
+  return gulp.watch(
+    [
+      config.paths.js.src,
+      config.paths.test.src
+    ],
+    ['build', 'test']
+  );
 });
 
-let envConfig;
+gulp.task('test', ['build'], () => {
+  const envs = env.set(envConfig);
 
-try {
-  envConfig = require('./.env.json');
-} catch (error) {
-  envConfig = {};
-}
-
-const envs = env.set(envConfig);
-
-gulp.task('test', ['build'], () =>
-  gulp.src([config.paths.test.run])
+  return gulp.src([config.paths.test.run], { read: false })
+    .pipe(plumber({
+      errorHandler(error) {
+        if (!envConfig.WATCH_MODE) throw error;
+      }
+    }))
     .pipe(envs)
-    .pipe(plumber())
     .pipe(mocha({ reporter: 'spec', grep: yargs.argv['mocha-grep'] }))
-    .pipe(envs.reset)
-);
+    .pipe(envs.reset);
+});
 
-// Default Task
-gulp.task('default', () =>
-  runSequence('clean', ['build', 'test'])
-);
+gulp.task('default', ['build', 'test']);
