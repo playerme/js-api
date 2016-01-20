@@ -1,0 +1,11 @@
+{
+  "name": "js-api-docs",
+  "description": "Documentation for Player.me JS API",
+  "private": true,
+  "devDependencies": {
+    "jsdoc": "jsdoc3/jsdoc"
+  },
+  "scripts": {
+    "docs": "jsdoc -c conf.json"
+  }
+}

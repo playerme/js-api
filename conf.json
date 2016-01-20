@@ -1,0 +1,13 @@
+{
+  "source": {
+    "include": ["../js-api/src"],
+    "exclude": ["../js-api/src/lib"]
+  },
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "template": "template",
+    "destination": "./docs",
+    "encoding": "utf8",
+    "recurse": true
+  }
+}
