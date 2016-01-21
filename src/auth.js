@@ -158,3 +158,35 @@ export function register(args = {}) {
     .then(postProcess)
     .then(message => Promise.resolve({ message }));
 }
+
+/**
+ * Resets the password
+ *
+ * @param   {Object}    args
+ * @param   {String}    args.code       Password reset code
+ * @param   {String}    args.password   The password (min: 8)
+ * @param   {String}    args.confirm    This should be the same as password
+ *
+ * @return  {Promise<Boolean>}   Resolves <code>true</code> if successful
+ *
+ * @example
+ * auth
+ *   .reset({ code: '<code>', password: '<password>', confirm: '<confirm>' })
+ *   .then((success) => success)
+ *   .catch((error) => error.message)
+ */
+export function reset(args = {}) {
+  const { code, password, confirm } = args;
+
+  if (!(code && password && confirm)) {
+    return Promise.reject({ message: error.INVALID_ARGUMENTS });
+  }
+
+  if (password !== confirm) {
+    return Promise.reject({ message: error.PASSWORD_CONFIRM_NOT_MATCHED });
+  }
+
+  return post(`auth/reset/${code}`, { password, confirm })
+    .then(postProcess)
+    .then(() => Promise.resolve({ message: 'Successful!' }));
+}

@@ -1,3 +1,5 @@
+import './reset';
+
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
 import { shouldFail, shouldSucceed } from '../lib/utils';

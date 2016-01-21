@@ -1,5 +1,7 @@
 'use strict';
 
+require('./reset');
+
 var _mocha = require('mocha');
 
 var _chai = require('chai');

@@ -9,6 +9,7 @@ exports.prelogin = prelogin;
 exports.check = check;
 exports.forgot = forgot;
 exports.register = register;
+exports.reset = reset;
 
 var _fetch = require('./lib/fetch');
 
@@ -179,5 +180,40 @@ function register() {
 
   return (0, _fetch.post)('auth/register', { username: username, email: email, password: password, confirm: confirm }).then(_fetch.postProcess).then(function (message) {
     return Promise.resolve({ message: message });
+  });
+}
+
+/**
+ * Resets the password
+ *
+ * @param   {Object}    args
+ * @param   {String}    args.code       Password reset code
+ * @param   {String}    args.password   The password (min: 8)
+ * @param   {String}    args.confirm    This should be the same as password
+ *
+ * @return  {Promise<Boolean>}   Resolves <code>true</code> if successful
+ *
+ * @example
+ * auth
+ *   .reset({ code: '<code>', password: '<password>', confirm: '<confirm>' })
+ *   .then((success) => success)
+ *   .catch((error) => error.message)
+ */
+function reset() {
+  var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var code = args.code;
+  var password = args.password;
+  var confirm = args.confirm;
+
+  if (!(code && password && confirm)) {
+    return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
+  }
+
+  if (password !== confirm) {
+    return Promise.reject({ message: _error2.default.PASSWORD_CONFIRM_NOT_MATCHED });
+  }
+
+  return (0, _fetch.post)('auth/reset/' + code, { password: password, confirm: confirm }).then(_fetch.postProcess).then(function () {
+    return Promise.resolve({ message: 'Successful!' });
   });
 }
