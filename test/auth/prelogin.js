@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
+import { shouldFail, shouldSucceed } from '../lib/utils';
 
 import { prelogin } from '../../dist/auth';
 
@@ -7,34 +8,34 @@ describe('auth.prelogin', () => {
   const nonExistingUsername = process.env.NON_EXISTING_USERNAME;
   const username = process.env.USERNAME;
 
-  it('should be defined and return false if parameter is not valid', () => {
-    assert.ok(prelogin);
-    assert.ok(!prelogin());
-  });
+  it(
+    `should be defined,
+        return a Promise,
+        and fail if arguments are not valid`,
+    done => {
+      assert.ok(prelogin);
+      assert.typeOf(prelogin(), 'Promise');
+      shouldFail(prelogin(), done);
+    }
+  );
 
-  it('should resolve to an object if user exists', (done) => {
-    const promise = prelogin({ login: username });
-    assert.typeOf(promise, 'Promise');
+  it(
+    `should fail if user does not exist`,
+    done => shouldFail(
+      prelogin({ login: nonExistingUsername }), done
+    )
+  );
 
-    promise
-      .then((user) => {
+  it(
+    `should resolve to a user object if successful`,
+    done => shouldSucceed(
+      prelogin({ login: username }),
+      user => {
         assert.typeOf(user, 'object');
         assert.ok(user.id);
         assert.equal(user.username, username);
-        done();
-      })
-    .catch(() => {
-      done(new Error('env user does not exist'));
-    });
-  });
-
-  it('should reject with an error if user does not exist', (done) => {
-    prelogin({ login: nonExistingUsername })
-      .then(() => {
-        done(new Error('env non-existing user exists'));
-      }).catch((error) => {
-        assert.ok(error.message);
-        done();
-      });
-  });
+      },
+      done
+    )
+  );
 });

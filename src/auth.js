@@ -1,4 +1,6 @@
 import { post, postProcess } from './lib/fetch';
+import error from './lib/error';
+
 import Cookie from 'cookie';
 
 /**
@@ -24,13 +26,15 @@ import Cookie from 'cookie';
  * @example
  * auth
  *   .prelogin({ login: '<login>' })
- *   .then((user) => user )
- *   .catch((error) => error.message )
+ *   .then((user) => user)
+ *   .catch((error) => error.message)
  */
 export function prelogin(args = {}) {
   const { login } = args;
 
-  if (!login) return false;
+  if (!login) {
+    return Promise.reject({ message: error.INVALID_ARGUMENTS });
+  }
 
   return post('auth/pre-login', { login }).then(postProcess);
 }
@@ -50,16 +54,18 @@ export function prelogin(args = {}) {
  * @example
  * auth
  *   .check({ login: '<login>', password: '<password>' })
- *   .then((user) => user )
- *   .catch((error) => error.message )
+ *   .then((user) => user)
+ *   .catch((error) => error.message)
  */
 export function check(args = {}) {
   const { login, password } = args;
 
-  if (!login || !password) return false;
+  if (!login || !password) {
+    return Promise.reject({ message: error.INVALID_ARGUMENTS });
+  }
 
   return post('auth/login', { login, password })
-    .then((response) => {
+    .then(response => {
       const cookies = Cookie.parse(response.headers.get('set-cookie'));
 
       // get subdomain / environemnt
@@ -73,7 +79,7 @@ export function check(args = {}) {
 
       const playermeSession = cookies[sessionName];
 
-      return response.json().then((responseJSON) => {
+      return response.json().then(responseJSON => {
         // inject session key into response result
         const resultWithSessionKey = {
           ...responseJSON,
@@ -96,13 +102,23 @@ export function check(args = {}) {
  * @param   {String}  args.username   The username
  *
  * @return  {Promise<Boolean>}  Resolves to <code>true</code> if successful
+ *
+ * @example
+ * auth
+ *   .forgot({ username: '<username>' })
+ *   .then((success) => success)
+ *   .catch((error) => error.message)
  */
 export function forgot(args = {}) {
   const { username } = args;
 
-  if (!username) return false;
+  if (!username) {
+    return Promise.reject({ message: error.INVALID_ARGUMENTS });
+  }
 
-  return post('auth/forgot', { username }).then(postProcess);
+  return post('auth/forgot', { username })
+    .then(postProcess)
+    .then(() => Promise.resolve({ message: 'Successful!' }));
 }
 
 /**
@@ -114,7 +130,7 @@ export function forgot(args = {}) {
  * @param   {String}    password    The password (min: 8)
  * @param   {String}    confirm     This should be the same as password
  *
- * @return  {Promise<String>}   Resolves to a success message
+ * @return  {Promise<Object>}   Resolves to a success message
  *
  * @example
  * auth
@@ -124,17 +140,21 @@ export function forgot(args = {}) {
  *     password: '<password>',
  *     confirm: '<confirm>'
  *   })
- *   .then((success) => success.message )
- *   .catch((error) => error.message )
+ *   .then((success) => success.message)
+ *   .catch((error) => error.message)
  */
 export function register(args = {}) {
   const { username, email, password, confirm } = args;
 
-  if (!(username && email && password && confirm)) return false;
+  if (!(username && email && password && confirm)) {
+    return Promise.reject({ message: error.INVALID_ARGUMENTS });
+  }
+
+  if (password !== confirm) {
+    return Promise.reject({ message: error.PASSWORD_CONFIRM_NOT_MATCHED });
+  }
 
   return post('auth/register', { username, email, password, confirm })
     .then(postProcess)
-    .then((message) => {
-      return Promise.resolve({ message });
-    });
+    .then(message => Promise.resolve({ message }));
 }

@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
+import { shouldFail, shouldSucceed } from '../lib/utils';
 
 import { forgot } from '../../dist/auth';
 
@@ -7,32 +8,31 @@ describe('auth.forgot', () => {
   const nonExistingUsername = process.env.NON_EXISTING_USERNAME;
   const username = process.env.USERNAME;
 
-  it('should be defined and return false if parameter is not valid', () => {
-    assert.ok(forgot);
-    assert.ok(!forgot());
-  });
+  it(
+    `should be defined,
+        return a Promise,
+        and fail if arguments are not valid`,
+    done => {
+      assert.ok(forgot);
+      assert.typeOf(forgot(), 'Promise');
+      shouldFail(forgot(), done);
+    }
+  );
 
-  it('should resolve if user exists', (done) => {
-    const promise = forgot({ username });
-    assert.typeOf(promise, 'Promise');
+  it(
+    `should fail if user does not exist`,
+    done => shouldFail(
+      forgot({ username: nonExistingUsername }),
+      done
+    )
+  );
 
-    promise
-      .then((success) => {
-        assert.isTrue(success);
-        done();
-      })
-    .catch(() => {
-      done(new Error('env user does not exist'));
-    });
-  });
-
-  it('should reject with an error if user does not exist', (done) => {
-    forgot({ username: nonExistingUsername })
-      .then(() => {
-        done(new Error('env non-existing user exists'));
-      }).catch((error) => {
-        assert.ok(error.message);
-        done();
-      });
-  });
+  it(
+    `should resolve with a success message if user exists`,
+    done => shouldSucceed(
+      forgot({ username }),
+      success => assert.ok(success.message),
+      done
+    )
+  );
 });

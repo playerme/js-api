@@ -4,39 +4,31 @@ var _mocha = require('mocha');
 
 var _chai = require('chai');
 
+var _utils = require('../lib/utils');
+
 var _auth = require('../../dist/auth');
 
 (0, _mocha.describe)('auth.check', function () {
   var nonExistingUsername = process.env.NON_EXISTING_USERNAME;
-  var username = process.env.USERNAME;
+  var login = process.env.USERNAME;
   var password = process.env.PASSWORD;
 
-  (0, _mocha.it)('should be defined and return false if parameter is not valid', function () {
+  (0, _mocha.it)('should be defined,\n        return a Promise,\n        and fail if arguments are not valid', function (done) {
     _chai.assert.ok(_auth.check);
-    _chai.assert.ok(!(0, _auth.check)());
+    _chai.assert.typeOf((0, _auth.check)(), 'Promise');
+    (0, _utils.shouldFail)((0, _auth.check)(), done);
   });
 
-  (0, _mocha.it)('should resolve to an object with playerme_session if valid', function (done) {
-    var promise = (0, _auth.check)({ login: username, password: password });
-    _chai.assert.typeOf(promise, 'Promise');
+  (0, _mocha.it)('should fail if username does not exist', function (done) {
+    return (0, _utils.shouldFail)((0, _auth.check)({ login: nonExistingUsername, password: password }), done);
+  });
 
-    promise.then(function (user) {
+  (0, _mocha.it)('should resolve to a user object\n        { id, username, playerme_session }\n        if successful', function (done) {
+    return (0, _utils.shouldSucceed)((0, _auth.check)({ login: login, password: password }), function (user) {
       _chai.assert.typeOf(user, 'object');
       _chai.assert.ok(user.id);
-      _chai.assert.equal(user.username, username);
+      _chai.assert.equal(user.username, login);
       _chai.assert.ok(user.playerme_session);
-      done();
-    }).catch(function () {
-      done(new Error('env username and or password is incorrect'));
-    });
-  });
-
-  (0, _mocha.it)('should reject with an error if not valid', function (done) {
-    (0, _auth.check)({ login: nonExistingUsername, password: password }).then(function () {
-      done(new Error('env non-existing user exists'));
-    }).catch(function (error) {
-      _chai.assert.ok(error.message);
-      done();
-    });
+    }, done);
   });
 });

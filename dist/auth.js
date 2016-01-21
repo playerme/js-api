@@ -12,6 +12,10 @@ exports.register = register;
 
 var _fetch = require('./lib/fetch');
 
+var _error = require('./lib/error');
+
+var _error2 = _interopRequireDefault(_error);
+
 var _cookie = require('cookie');
 
 var _cookie2 = _interopRequireDefault(_cookie);
@@ -41,14 +45,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @example
  * auth
  *   .prelogin({ login: '<login>' })
- *   .then((user) => user )
- *   .catch((error) => error.message )
+ *   .then((user) => user)
+ *   .catch((error) => error.message)
  */
 function prelogin() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
   var login = args.login;
 
-  if (!login) return false;
+  if (!login) {
+    return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
+  }
 
   return (0, _fetch.post)('auth/pre-login', { login: login }).then(_fetch.postProcess);
 }
@@ -68,15 +74,17 @@ function prelogin() {
  * @example
  * auth
  *   .check({ login: '<login>', password: '<password>' })
- *   .then((user) => user )
- *   .catch((error) => error.message )
+ *   .then((user) => user)
+ *   .catch((error) => error.message)
  */
 function check() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
   var login = args.login;
   var password = args.password;
 
-  if (!login || !password) return false;
+  if (!login || !password) {
+    return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
+  }
 
   return (0, _fetch.post)('auth/login', { login: login, password: password }).then(function (response) {
     var cookies = _cookie2.default.parse(response.headers.get('set-cookie'));
@@ -112,14 +120,24 @@ function check() {
  * @param   {String}  args.username   The username
  *
  * @return  {Promise<Boolean>}  Resolves to <code>true</code> if successful
+ *
+ * @example
+ * auth
+ *   .forgot({ username: '<username>' })
+ *   .then((success) => success)
+ *   .catch((error) => error.message)
  */
 function forgot() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
   var username = args.username;
 
-  if (!username) return false;
+  if (!username) {
+    return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
+  }
 
-  return (0, _fetch.post)('auth/forgot', { username: username }).then(_fetch.postProcess);
+  return (0, _fetch.post)('auth/forgot', { username: username }).then(_fetch.postProcess).then(function () {
+    return Promise.resolve({ message: 'Successful!' });
+  });
 }
 
 /**
@@ -131,7 +149,7 @@ function forgot() {
  * @param   {String}    password    The password (min: 8)
  * @param   {String}    confirm     This should be the same as password
  *
- * @return  {Promise<String>}   Resolves to a success message
+ * @return  {Promise<Object>}   Resolves to a success message
  *
  * @example
  * auth
@@ -141,8 +159,8 @@ function forgot() {
  *     password: '<password>',
  *     confirm: '<confirm>'
  *   })
- *   .then((success) => success.message )
- *   .catch((error) => error.message )
+ *   .then((success) => success.message)
+ *   .catch((error) => error.message)
  */
 function register() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
@@ -151,7 +169,13 @@ function register() {
   var password = args.password;
   var confirm = args.confirm;
 
-  if (!(username && email && password && confirm)) return false;
+  if (!(username && email && password && confirm)) {
+    return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
+  }
+
+  if (password !== confirm) {
+    return Promise.reject({ message: _error2.default.PASSWORD_CONFIRM_NOT_MATCHED });
+  }
 
   return (0, _fetch.post)('auth/register', { username: username, email: email, password: password, confirm: confirm }).then(_fetch.postProcess).then(function (message) {
     return Promise.resolve({ message: message });

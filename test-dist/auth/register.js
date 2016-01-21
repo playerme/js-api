@@ -4,6 +4,8 @@ var _mocha = require('mocha');
 
 var _chai = require('chai');
 
+var _utils = require('../lib/utils');
+
 var _auth = require('../../dist/auth');
 
 (0, _mocha.describe)('auth.register', function () {
@@ -13,74 +15,47 @@ var _auth = require('../../dist/auth');
   var password = process.env.REGISTER_PASSWORD;
   var confirm = password;
 
-  (0, _mocha.it)('should be defined and return false if parameter is not valid', function () {
+  (0, _mocha.it)('should be defined,\n        return a Promise,\n        and fail if arguments are not valid', function (done) {
     _chai.assert.ok(_auth.register);
-    _chai.assert.ok(!(0, _auth.register)());
+    _chai.assert.typeOf((0, _auth.register)(), 'Promise');
+    (0, _utils.shouldFail)((0, _auth.register)(), done);
   });
 
-  var shouldFail = function shouldFail(args, done) {
-    var promise = (0, _auth.register)(args);
-    _chai.assert.typeOf(promise, 'Promise');
-
-    promise.then(function (success) {
-      done(new Error(success.message));
-    }).catch(function (error) {
-      _chai.assert.ok(error.message);
-      done();
-    });
-  };
-
   (0, _mocha.it)('should fail if username already exists', function (done) {
-    shouldFail({
-      email: email, username: existingUsername, password: password, confirm: confirm
-    }, done);
+    return (0, _utils.shouldFail)((0, _auth.register)({ email: email, username: existingUsername, password: password, confirm: confirm }), done);
   });
 
   (0, _mocha.it)('should fail if username exceeds 20 characters', function (done) {
-    shouldFail({
+    return (0, _utils.shouldFail)((0, _auth.register)({
       email: email, username: '123456789012345678901', password: password, confirm: confirm
-    }, done);
+    }), done);
   });
 
   (0, _mocha.it)('should fail if username is below 3 characters', function (done) {
-    shouldFail({
+    return (0, _utils.shouldFail)((0, _auth.register)({
       email: email, username: '12', password: password, confirm: confirm
-    }, done);
+    }), done);
   });
 
   (0, _mocha.it)('should fail if username has invalid characters', function (done) {
-    shouldFail({
-      email: email, username: '?*#%', password: password, confirm: confirm
-    }, done);
+    return (0, _utils.shouldFail)((0, _auth.register)({ email: email, username: '?*#%', password: password, confirm: confirm }), done);
   });
 
   (0, _mocha.it)('should fail if password has less than 8 characters', function (done) {
-    shouldFail({
-      email: email, username: username, password: '1234567', confirm: confirm
-    }, done);
+    return (0, _utils.shouldFail)((0, _auth.register)({ email: email, username: username, password: '1234567', confirm: confirm }), done);
   });
 
   (0, _mocha.it)('should fail if confirm is not the same as password', function (done) {
-    shouldFail({
-      email: email, username: username, password: password, confirm: confirm + 1
-    }, done);
+    return (0, _utils.shouldFail)((0, _auth.register)({ email: email, username: username, password: password, confirm: confirm + 1 }), done);
   });
 
   (0, _mocha.it)('should fail if email is invalid', function (done) {
-    shouldFail({
-      email: 'invalid email', username: username, password: password, confirm: confirm
-    }, done);
+    return (0, _utils.shouldFail)((0, _auth.register)({ email: 'invalid email', username: username, password: password, confirm: confirm }), done);
   });
 
-  (0, _mocha.it)('should resolve with a success message if registration is successful', function (done) {
-    var promise = (0, _auth.register)({ email: email, username: username, password: password, confirm: confirm });
-    _chai.assert.typeOf(promise, 'Promise');
-
-    promise.then(function (success) {
+  (0, _mocha.it)('should resolve with a success message\n        if registration is successful', function (done) {
+    return (0, _utils.shouldSucceed)((0, _auth.register)({ email: email, username: username, password: password, confirm: confirm }), function (success) {
       _chai.assert.ok(success.message);
-      done();
-    }).catch(function (error) {
-      done(new Error(error.message));
-    });
+    }, done);
   });
 });

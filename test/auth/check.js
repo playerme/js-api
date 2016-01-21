@@ -1,42 +1,43 @@
 import { describe, it } from 'mocha';
 import { assert } from 'chai';
+import { shouldFail, shouldSucceed } from '../lib/utils';
 
 import { check } from '../../dist/auth';
 
 describe('auth.check', () => {
   const nonExistingUsername = process.env.NON_EXISTING_USERNAME;
-  const username = process.env.USERNAME;
+  const login = process.env.USERNAME;
   const password = process.env.PASSWORD;
 
-  it('should be defined and return false if parameter is not valid', () => {
-    assert.ok(check);
-    assert.ok(!check());
-  });
+  it(
+    `should be defined,
+        return a Promise,
+        and fail if arguments are not valid`,
+    done => {
+      assert.ok(check);
+      assert.typeOf(check(), 'Promise');
+      shouldFail(check(), done);
+    }
+  );
 
-  it('should resolve to an object with playerme_session if valid', (done) => {
-    const promise = check({ login: username, password });
-    assert.typeOf(promise, 'Promise');
+  it(
+    `should fail if username does not exist`,
+    done => shouldFail(check({ login: nonExistingUsername, password }), done)
+  );
 
-    promise
-      .then((user) => {
+  it(
+    `should resolve to a user object
+        { id, username, playerme_session }
+        if successful`,
+    done => shouldSucceed(
+      check({ login, password }),
+      user => {
         assert.typeOf(user, 'object');
         assert.ok(user.id);
-        assert.equal(user.username, username);
+        assert.equal(user.username, login);
         assert.ok(user.playerme_session);
-        done();
-      })
-    .catch(() => {
-      done(new Error('env username and or password is incorrect'));
-    });
-  });
-
-  it('should reject with an error if not valid', (done) => {
-    check({ login: nonExistingUsername, password })
-      .then(() => {
-        done(new Error('env non-existing user exists'));
-      }).catch((error) => {
-        assert.ok(error.message);
-        done();
-      });
-  });
+      },
+      done
+    )
+  );
 });
