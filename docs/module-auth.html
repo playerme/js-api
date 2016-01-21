@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-auth.html">auth</a><ul class='methods'><li data-type='method'><a href="module-auth.html#.check">check</a></li><li data-type='method'><a href="module-auth.html#.forgot">forgot</a></li><li data-type='method'><a href="module-auth.html#.prelogin">prelogin</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-auth.html">auth</a><ul class='methods'><li data-type='method'><a href="module-auth.html#.check">check</a></li><li data-type='method'><a href="module-auth.html#.forgot">forgot</a></li><li data-type='method'><a href="module-auth.html#.prelogin">prelogin</a></li><li data-type='method'><a href="module-auth.html#.register">register</a></li><li data-type='method'><a href="module-auth.html#.reset">reset</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -248,7 +248,7 @@ make sure you keep that cookie and send it on consequent requests.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line56">line 56</a>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -298,9 +298,9 @@ make sure you keep that cookie and send it on consequent requests.</p>
     <h5>Example</h5>
     
     <pre class="prettyprint"><code>auth
-  .check({ login: '&lt;login>', password: '&lt;password' })
-  .then((user) => user // do something with user info )
-  .catch((error) => error // do something with error )</code></pre>
+  .check({ login: '&lt;login>', password: '&lt;password>' })
+  .then((user) => user)
+  .catch((error) => error.message)</code></pre>
 
 
 
@@ -458,7 +458,7 @@ make sure you keep that cookie and send it on consequent requests.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line100">line 100</a>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line112">line 112</a>
     </li></ul></dd>
     
 
@@ -503,6 +503,14 @@ make sure you keep that cookie and send it on consequent requests.</p>
 </dl>
 
     
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>auth
+  .forgot({ username: '&lt;username>' })
+  .then((success) => success)
+  .catch((error) => error.message)</code></pre>
 
 
 
@@ -665,7 +673,7 @@ Please note that this is heavily rate limited for security purposes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line30">line 30</a>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
@@ -716,8 +724,522 @@ Please note that this is heavily rate limited for security purposes.</p>
     
     <pre class="prettyprint"><code>auth
   .prelogin({ login: '&lt;login>' })
-  .then((user) => user // do something with user info )
-  .catch((error) => error // do something with error )</code></pre>
+  .then((user) => user)
+  .catch((error) => error.message)</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".register"><span class="type-signature">(static) </span>register<span class="signature">(args, username, email, password, confirm)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Register a new user</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The username (min: 3, max: 20, regex: [a-zA-Z0-9_-]+$)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>email</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The email</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The password (min: 8)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>confirm</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>This should be the same as password</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line146">line 146</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Resolves to a success message</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Object></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>auth
+  .register({
+    email: '&lt;email>',
+    username: '&lt;username>',
+    password: '&lt;password>',
+    confirm: '&lt;confirm>'
+  })
+  .then((success) => success.message)
+  .catch((error) => error.message)</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".reset"><span class="type-signature">(static) </span>reset<span class="signature">(args)</span><span class="type-signature"> &rarr; {Promise.&lt;Boolean>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Resets the password</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>code</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Password reset code</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The password (min: 8)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>confirm</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>This should be the same as password</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line178">line 178</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Resolves <code>true</code> if successful</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Boolean></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>auth
+  .reset({ code: '&lt;code>', password: '&lt;password>', confirm: '&lt;confirm>' })
+  .then((success) => success)
+  .catch((error) => error.message)</code></pre>
 
 
 
@@ -739,7 +1261,7 @@ Please note that this is heavily rate limited for security purposes.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.0-dev</a> on Wed Jan 20 2016 22:08:38 GMT+0800 (PHT) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.0-dev</a> on Thu Jan 21 2016 21:42:29 GMT+0800 (PHT) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
