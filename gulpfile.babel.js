@@ -25,13 +25,21 @@ let envConfig;
 
 try {
   envConfig = require('./.env.json');
+
+  const timestamp = Date.now();
+  for (const key in envConfig) {
+    envConfig[key] = envConfig[key]
+      .replace(/\$\{timestamp\}/g, timestamp);
+  }
 } catch (error) {
+  if (error instanceof SyntaxError) throw error;
+
   envConfig = {};
 }
 
-gulp.task('clean', () =>
+gulp.task('clean', () => {
   del([config.paths.js.dist, config.paths.test.dist])
-);
+});
 
 gulp.task('build', ['clean', 'babel-src', 'babel-test']);
 
@@ -83,7 +91,11 @@ gulp.task('test', ['build'], () => {
       }
     }))
     .pipe(envs)
-    .pipe(mocha({ reporter: 'spec', grep: yargs.argv['mocha-grep'] }))
+    .pipe(mocha({
+      bail: true,
+      reporter: 'spec',
+      grep: yargs.argv['mocha-grep']
+    }))
     .pipe(envs.reset);
 });
 

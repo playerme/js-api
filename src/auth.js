@@ -24,8 +24,8 @@ import Cookie from 'cookie';
  * @example
  * auth
  *   .prelogin({ login: '<login>' })
- *   .then((user) => user // do something with user info )
- *   .catch((error) => error // do something with error )
+ *   .then((user) => user )
+ *   .catch((error) => error.message )
  */
 export function prelogin(args = {}) {
   const { login } = args;
@@ -49,9 +49,9 @@ export function prelogin(args = {}) {
  *
  * @example
  * auth
- *   .check({ login: '<login>', password: '<password' })
- *   .then((user) => user // do something with user info )
- *   .catch((error) => error // do something with error )
+ *   .check({ login: '<login>', password: '<password>' })
+ *   .then((user) => user )
+ *   .catch((error) => error.message )
  */
 export function check(args = {}) {
   const { login, password } = args;
@@ -102,9 +102,39 @@ export function forgot(args = {}) {
 
   if (!username) return false;
 
-  return post('auth/forgot', { username })
-    .then((response) => {
-      return Promise.resolve(response);
-    })
-    .then(postProcess);
+  return post('auth/forgot', { username }).then(postProcess);
+}
+
+/**
+ * Register a new user
+ *
+ * @param   {Object}    args
+ * @param   {String}    username    The username (min: 3, max: 20, regex: [a-zA-Z0-9_-]+$)
+ * @param   {String}    email       The email
+ * @param   {String}    password    The password (min: 8)
+ * @param   {String}    confirm     This should be the same as password
+ *
+ * @return  {Promise<String>}   Resolves to a success message
+ *
+ * @example
+ * auth
+ *   .register({
+ *     email: '<email>',
+ *     username: '<username>',
+ *     password: '<password>',
+ *     confirm: '<confirm>'
+ *   })
+ *   .then((success) => success.message )
+ *   .catch((error) => error.message )
+ */
+export function register(args = {}) {
+  const { username, email, password, confirm } = args;
+
+  if (!(username && email && password && confirm)) return false;
+
+  return post('auth/register', { username, email, password, confirm })
+    .then(postProcess)
+    .then((message) => {
+      return Promise.resolve({ message });
+    });
 }
