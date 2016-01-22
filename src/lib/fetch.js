@@ -1,4 +1,11 @@
-import _fetch from 'isomorphic-fetch';
+let stockFetch;
+
+/* eslint no-use-before-define: 0 */
+if (typeof fetch !== 'undefined') {
+  stockFetch = fetch;
+} else {
+  stockFetch = require('isomorphic-fetch');
+}
 
 const JSON_HEADERS = {
   Accept: 'application/json',
@@ -7,10 +14,10 @@ const JSON_HEADERS = {
 
 const BASE_URL = process.env.BASE_URL || 'https://player.me/api/v1';
 
-export default function fetch(endpoint, config = {}) {
+export default function _fetch(endpoint, config = {}) {
   const url = `${BASE_URL}/${endpoint}`;
 
-  return _fetch(
+  return stockFetch(
     url, {
       headers: JSON_HEADERS,
       method: 'GET',
@@ -20,7 +27,7 @@ export default function fetch(endpoint, config = {}) {
 }
 
 export function post(endpoint, args) {
-  return fetch(endpoint, { method: 'POST', body: JSON.stringify(args) });
+  return _fetch(endpoint, { method: 'POST', body: JSON.stringify(args) });
 }
 
 export function postProcess(response) {
