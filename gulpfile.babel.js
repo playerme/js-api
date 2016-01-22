@@ -28,6 +28,8 @@ try {
 
   const timestamp = Date.now();
   for (const key in envConfig) {
+    if (!key) continue;
+
     envConfig[key] = envConfig[key]
       .replace(/\$\{timestamp\}/g, timestamp);
   }
@@ -37,9 +39,9 @@ try {
   envConfig = {};
 }
 
-gulp.task('clean', () => {
+gulp.task('clean', () =>
   del([config.paths.js.dist, config.paths.test.dist])
-});
+);
 
 gulp.task('build', ['clean', 'babel-src', 'babel-test']);
 
