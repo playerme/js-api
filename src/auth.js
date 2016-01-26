@@ -29,14 +29,14 @@ import Cookie from 'cookie';
  *   .then((user) => user)
  *   .catch((error) => error.message)
  */
-export function prelogin(args = {}) {
+export function prelogin(args = {}, config = {}) {
   const { login } = args;
 
   if (!login) {
     return Promise.reject({ message: error.INVALID_ARGUMENTS });
   }
 
-  return post('auth/pre-login', { login }).then(postProcess);
+  return post('auth/pre-login', { login }, config).then(postProcess);
 }
 
 /**
@@ -57,14 +57,14 @@ export function prelogin(args = {}) {
  *   .then((user) => user)
  *   .catch((error) => error.message)
  */
-export function check(args = {}) {
+export function check(args = {}, config = {}) {
   const { login, password } = args;
 
   if (!login || !password) {
     return Promise.reject({ message: error.INVALID_ARGUMENTS });
   }
 
-  return post('auth/login', { login, password })
+  return post('auth/login', { login, password }, config)
     .then(response => {
       const cookies = Cookie.parse(response.headers.get('set-cookie'));
 
@@ -109,14 +109,14 @@ export function check(args = {}) {
  *   .then((success) => success)
  *   .catch((error) => error.message)
  */
-export function forgot(args = {}) {
+export function forgot(args = {}, config = {}) {
   const { username } = args;
 
   if (!username) {
     return Promise.reject({ message: error.INVALID_ARGUMENTS });
   }
 
-  return post('auth/forgot', { username })
+  return post('auth/forgot', { username }, config)
     .then(postProcess)
     .then(() => Promise.resolve({ message: 'Successful!' }));
 }
@@ -143,7 +143,7 @@ export function forgot(args = {}) {
  *   .then((success) => success.message)
  *   .catch((error) => error.message)
  */
-export function register(args = {}) {
+export function register(args = {}, config = {}) {
   const { username, email, password, confirm } = args;
 
   if (!(username && email && password && confirm)) {
@@ -154,7 +154,7 @@ export function register(args = {}) {
     return Promise.reject({ message: error.PASSWORD_CONFIRM_NOT_MATCHED });
   }
 
-  return post('auth/register', { username, email, password, confirm })
+  return post('auth/register', { username, email, password, confirm }, config)
     .then(postProcess)
     .then(message => Promise.resolve({ message }));
 }
@@ -175,7 +175,7 @@ export function register(args = {}) {
  *   .then((success) => success)
  *   .catch((error) => error.message)
  */
-export function reset(args = {}) {
+export function reset(args = {}, config = {}) {
   const { code, password, confirm } = args;
 
   if (!(code && password && confirm)) {
@@ -186,7 +186,7 @@ export function reset(args = {}) {
     return Promise.reject({ message: error.PASSWORD_CONFIRM_NOT_MATCHED });
   }
 
-  return post(`auth/reset/${code}`, { password, confirm })
+  return post(`auth/reset/${code}`, { password, confirm }, config)
     .then(postProcess)
     .then(() => Promise.resolve({ message: 'Successful!' }));
 }

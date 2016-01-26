@@ -10,7 +10,6 @@ exports.post = post;
 exports.postProcess = postProcess;
 var stockFetch = undefined;
 
-/* eslint no-use-before-define: 0 */
 if (typeof fetch !== 'undefined') {
   stockFetch = fetch;
 } else {
@@ -27,16 +26,22 @@ var BASE_URL = process.env.BASE_URL || 'https://player.me/api/v1';
 function _fetch(endpoint) {
   var config = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-  var url = BASE_URL + '/' + endpoint;
+  var baseURL = config.baseURL || BASE_URL;
 
-  return stockFetch(url, _extends({
+  return stockFetch(baseURL + '/' + endpoint, _extends({
     headers: JSON_HEADERS,
     method: 'GET'
   }, config));
 }
 
 function post(endpoint, args) {
-  return _fetch(endpoint, { method: 'POST', body: JSON.stringify(args) });
+  var config = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+  return _fetch(endpoint, {
+    method: 'POST',
+    body: JSON.stringify(args),
+    baseURL: config.baseURL
+  });
 }
 
 function postProcess(response) {

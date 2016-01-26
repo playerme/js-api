@@ -1,6 +1,5 @@
 let stockFetch;
 
-/* eslint no-use-before-define: 0 */
 if (typeof fetch !== 'undefined') {
   stockFetch = fetch;
 } else {
@@ -15,10 +14,10 @@ const JSON_HEADERS = {
 const BASE_URL = process.env.BASE_URL || 'https://player.me/api/v1';
 
 export default function _fetch(endpoint, config = {}) {
-  const url = `${BASE_URL}/${endpoint}`;
+  const baseURL = config.baseURL || BASE_URL;
 
   return stockFetch(
-    url, {
+    `${baseURL}/${endpoint}`, {
       headers: JSON_HEADERS,
       method: 'GET',
       ...config
@@ -26,8 +25,12 @@ export default function _fetch(endpoint, config = {}) {
   );
 }
 
-export function post(endpoint, args) {
-  return _fetch(endpoint, { method: 'POST', body: JSON.stringify(args) });
+export function post(endpoint, args, config = {}) {
+  return _fetch(endpoint, {
+    method: 'POST',
+    body: JSON.stringify(args),
+    baseURL: config.baseURL
+  });
 }
 
 export function postProcess(response) {

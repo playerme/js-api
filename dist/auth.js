@@ -51,13 +51,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 function prelogin() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var config = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
   var login = args.login;
 
   if (!login) {
     return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
   }
 
-  return (0, _fetch.post)('auth/pre-login', { login: login }).then(_fetch.postProcess);
+  return (0, _fetch.post)('auth/pre-login', { login: login }, config).then(_fetch.postProcess);
 }
 
 /**
@@ -80,6 +81,7 @@ function prelogin() {
  */
 function check() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var config = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
   var login = args.login;
   var password = args.password;
 
@@ -87,7 +89,7 @@ function check() {
     return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
   }
 
-  return (0, _fetch.post)('auth/login', { login: login, password: password }).then(function (response) {
+  return (0, _fetch.post)('auth/login', { login: login, password: password }, config).then(function (response) {
     var cookies = _cookie2.default.parse(response.headers.get('set-cookie'));
 
     // get subdomain / environemnt
@@ -130,13 +132,14 @@ function check() {
  */
 function forgot() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var config = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
   var username = args.username;
 
   if (!username) {
     return Promise.reject({ message: _error2.default.INVALID_ARGUMENTS });
   }
 
-  return (0, _fetch.post)('auth/forgot', { username: username }).then(_fetch.postProcess).then(function () {
+  return (0, _fetch.post)('auth/forgot', { username: username }, config).then(_fetch.postProcess).then(function () {
     return Promise.resolve({ message: 'Successful!' });
   });
 }
@@ -165,6 +168,7 @@ function forgot() {
  */
 function register() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var config = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
   var username = args.username;
   var email = args.email;
   var password = args.password;
@@ -178,7 +182,7 @@ function register() {
     return Promise.reject({ message: _error2.default.PASSWORD_CONFIRM_NOT_MATCHED });
   }
 
-  return (0, _fetch.post)('auth/register', { username: username, email: email, password: password, confirm: confirm }).then(_fetch.postProcess).then(function (message) {
+  return (0, _fetch.post)('auth/register', { username: username, email: email, password: password, confirm: confirm }, config).then(_fetch.postProcess).then(function (message) {
     return Promise.resolve({ message: message });
   });
 }
@@ -201,6 +205,7 @@ function register() {
  */
 function reset() {
   var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var config = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
   var code = args.code;
   var password = args.password;
   var confirm = args.confirm;
@@ -213,7 +218,7 @@ function reset() {
     return Promise.reject({ message: _error2.default.PASSWORD_CONFIRM_NOT_MATCHED });
   }
 
-  return (0, _fetch.post)('auth/reset/' + code, { password: password, confirm: confirm }).then(_fetch.postProcess).then(function () {
+  return (0, _fetch.post)('auth/reset/' + code, { password: password, confirm: confirm }, config).then(_fetch.postProcess).then(function () {
     return Promise.resolve({ message: 'Successful!' });
   });
 }
