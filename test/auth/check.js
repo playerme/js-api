@@ -37,7 +37,7 @@ describe('auth.check', () => {
         assert.typeOf(user, 'object');
         assert.ok(user.id);
         assert.equal(user.username, login);
-        assert.ok(user.playerme_session);
+        assert.ok(user.cookie);
       },
       done
     )

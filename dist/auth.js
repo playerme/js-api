@@ -17,10 +17,6 @@ var _error = require('./lib/error');
 
 var _error2 = _interopRequireDefault(_error);
 
-var _cookie = require('cookie');
-
-var _cookie2 = _interopRequireDefault(_cookie);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -90,24 +86,13 @@ function check() {
   }
 
   return (0, _fetch.post)('auth/login', { login: login, password: password }, config).then(function (response) {
-    var cookies = _cookie2.default.parse(response.headers.get('set-cookie'));
-
-    // get subdomain / environemnt
-    var matched = /^https?:\/\/([^\.]+)\./.exec(response.url);
-    var sessionName = 'playerme_session';
-
-    if (matched) {
-      var subdomain = matched[1];
-      sessionName = subdomain + '_' + sessionName;
-    }
-
-    var playermeSession = cookies[sessionName];
+    var cookie = response.headers.get('set-cookie');
 
     return response.json().then(function (responseJSON) {
       // inject session key into response result
       var resultWithSessionKey = _extends({}, responseJSON, {
         results: _extends({}, responseJSON.results, {
-          playerme_session: playermeSession
+          cookie: cookie
         })
       });
 

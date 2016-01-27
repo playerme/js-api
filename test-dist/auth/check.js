@@ -30,7 +30,7 @@ var _auth = require('../../dist/auth');
       _chai.assert.typeOf(user, 'object');
       _chai.assert.ok(user.id);
       _chai.assert.equal(user.username, login);
-      _chai.assert.ok(user.playerme_session);
+      _chai.assert.ok(user.cookie);
     }, done);
   });
 });

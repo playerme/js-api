@@ -1,8 +1,6 @@
 import { post, postProcess } from './lib/fetch';
 import error from './lib/error';
 
-import Cookie from 'cookie';
-
 /**
  * @module auth
  *
@@ -66,18 +64,7 @@ export function check(args = {}, config = {}) {
 
   return post('auth/login', { login, password }, config)
     .then(response => {
-      const cookies = Cookie.parse(response.headers.get('set-cookie'));
-
-      // get subdomain / environemnt
-      const matched = /^https?:\/\/([^\.]+)\./.exec(response.url);
-      let sessionName = 'playerme_session';
-
-      if (matched) {
-        const subdomain = matched[1];
-        sessionName = `${subdomain}_${sessionName}`;
-      }
-
-      const playermeSession = cookies[sessionName];
+      const cookie = response.headers.get('set-cookie');
 
       return response.json().then(responseJSON => {
         // inject session key into response result
@@ -85,7 +72,7 @@ export function check(args = {}, config = {}) {
           ...responseJSON,
           results: {
             ...responseJSON.results,
-            playerme_session: playermeSession
+            cookie
           }
         };
 
