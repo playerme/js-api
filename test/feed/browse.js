@@ -2,7 +2,8 @@ import { describe, it } from 'mocha';
 import { assert } from 'chai';
 import { shouldFail, shouldSucceed } from '../lib/utils';
 
-import { browse } from '../../dist/feed';
+import { feed } from '../../dist';
+const { browse } = feed;
 
 describe('feed.browse', () => {
   const cookie = process.env.COOKIE;
