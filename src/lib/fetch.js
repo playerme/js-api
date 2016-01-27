@@ -16,14 +16,49 @@ const BASE_URL = process.env.BASE_URL || 'https://player.me/api/v1';
 export default function _fetch(endpoint, config = {}) {
   const baseURL = config.baseURL || BASE_URL;
 
+  const additionalHeaders = {};
+  const { cookie } = config;
+  if (cookie) {
+    additionalHeaders.Cookie = cookie;
+  }
+
+  const headers = {
+    ...JSON_HEADERS,
+    ...additionalHeaders
+  };
+
   return stockFetch(
     `${baseURL}/${endpoint}`, {
-      headers: JSON_HEADERS,
+      headers,
       method: 'GET',
       ...config
     }
   );
 }
+
+function _serialize(args = {}) {
+  const query = [];
+
+  for (const key in args) {
+    if (args.hasOwnProperty(key)) {
+      const name = encodeURIComponent(key);
+      const value = encodeURIComponent(args[key]);
+      query.push(`${name}=${value}`);
+    }
+  }
+
+  return query.join('&');
+}
+
+export function get(endpoint, args, config = {}) {
+  const queryString = _serialize(args);
+
+  return _fetch(
+    endpoint + (queryString ? '?' + queryString : ''),
+    { method: 'GET', ...config }
+  );
+}
+
 
 export function post(endpoint, args, config = {}) {
   return _fetch(endpoint, {

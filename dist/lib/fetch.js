@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = _fetch;
+exports.get = get;
 exports.post = post;
 exports.postProcess = postProcess;
 var stockFetch = undefined;
@@ -28,10 +29,43 @@ function _fetch(endpoint) {
 
   var baseURL = config.baseURL || BASE_URL;
 
+  var additionalHeaders = {};
+  var cookie = config.cookie;
+
+  if (cookie) {
+    additionalHeaders.Cookie = cookie;
+  }
+
+  var headers = _extends({}, JSON_HEADERS, additionalHeaders);
+
   return stockFetch(baseURL + '/' + endpoint, _extends({
-    headers: JSON_HEADERS,
+    headers: headers,
     method: 'GET'
   }, config));
+}
+
+function _serialize() {
+  var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+  var query = [];
+
+  for (var key in args) {
+    if (args.hasOwnProperty(key)) {
+      var name = encodeURIComponent(key);
+      var value = encodeURIComponent(args[key]);
+      query.push(name + '=' + value);
+    }
+  }
+
+  return query.join('&');
+}
+
+function get(endpoint, args) {
+  var config = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+  var queryString = _serialize(args);
+
+  return _fetch(endpoint + (queryString ? '?' + queryString : ''), _extends({ method: 'GET' }, config));
 }
 
 function post(endpoint, args) {
