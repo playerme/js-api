@@ -11,7 +11,7 @@ describe('feed.browse', () => {
   it(
     `should be defined,
         return a Promise,
-        and fail if no authenticated`,
+        and fail if not authenticated`,
     done => {
       assert.ok(browse);
       assert.typeOf(browse(), 'Promise');
@@ -23,9 +23,9 @@ describe('feed.browse', () => {
     `should succeed if authenticated`,
     done => {
       shouldSucceed(
-        browse({}, { cookie }),
-        feeds => {
-          assert.isArray(feeds);
+        browse({ _limit: 10, _from: 80 }, { cookie }),
+        response => {
+          assert.isArray(response.results);
         },
         done
       );
